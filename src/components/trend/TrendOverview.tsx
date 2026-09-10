@@ -26,22 +26,28 @@ function PlatformActivityBar({
     <div className="flex items-center gap-3">
       <div className="flex items-center gap-2 w-28 shrink-0">
         <span style={{ color: platform === "x" ? "var(--navy)" : platform === "reddit" ? "#8B4513" : "var(--accent-blue)" }}>
-          <PlatformIcon platform={platform} size={14} />
+          <PlatformIcon platform={platform} size={15} />
         </span>
-        <span className="text-xs font-medium" style={{ color: "var(--slate)" }}>
+        <span className="text-xs font-semibold" style={{ color: "var(--navy)" }}>
           {PLATFORM_LABELS[platform]}
         </span>
       </div>
-      <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--secondary)" }}>
+      <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--secondary)" }}>
         <div
           className="h-full rounded-full transition-all duration-1000"
           style={{ width: `${score}%`, background: color }}
         />
       </div>
-      <span className="text-xs font-bold w-8 text-right" style={{ color }}>
+      <span className="text-xs font-bold w-8 text-right" style={{ color: "var(--navy)" }}>
         {score}
       </span>
-      <span className="text-xs w-12" style={{ color }}>
+      <span
+        className="text-[10px] font-semibold px-1.5 py-0.5 rounded text-center w-14 shrink-0"
+        style={{
+          background: score >= 80 ? "rgba(90, 158, 124, 0.12)" : score >= 55 ? "rgba(196, 148, 58, 0.12)" : "rgba(82, 97, 107, 0.1)",
+          color,
+        }}
+      >
         {label}
       </span>
     </div>
@@ -141,14 +147,30 @@ export default function TrendOverview({ trend }: TrendOverviewProps) {
                   Normalized 0–100
                 </span>
               </div>
-              <p className="text-xs mb-3" style={{ color: "var(--slate)" }}>
+              <p className="text-xs mb-1 text-slate-500">
                 Cross-platform signals are normalized before comparison. Raw engagement metrics (likes, upvotes, reactions) are not directly equivalent across platforms.
               </p>
             </div>
-            <div className="space-y-3 pt-2">
+
+            {/* Vertically centered and well-spaced platform bars */}
+            <div className="flex-1 flex flex-col justify-center space-y-4 my-2">
               <PlatformActivityBar platform="x" score={trend.platformActivity.x} />
               <PlatformActivityBar platform="reddit" score={trend.platformActivity.reddit} />
               <PlatformActivityBar platform="telegram" score={trend.platformActivity.telegram} />
+            </div>
+
+            {/* Bottom Platform Velocity Strip */}
+            <div className="flex items-center justify-between pt-2.5 border-t text-xs text-slate-500" style={{ borderColor: "#EEF2F5" }}>
+              <span>
+                Fastest momentum: <strong className="text-[#1E293B] font-semibold">{PLATFORM_LABELS[trend.fastestPlatform]}</strong>
+              </span>
+              <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                  <polyline points="17 6 23 6 23 12" />
+                </svg>
+                Primary Driver
+              </span>
             </div>
           </div>
         </div>

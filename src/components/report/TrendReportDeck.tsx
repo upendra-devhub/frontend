@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { TrendAnalytics } from "@/data/types";
@@ -51,10 +51,24 @@ const slideVariants: Variants = {
 export default function TrendReportDeck({ trend, onExit }: TrendReportDeckProps) {
   const [[activeSlide, direction], setActiveSlide] = useState<[number, number]>([0, 0]);
 
+  const stageRef = useRef<HTMLElement>(null);
+
+  // Always reset scroll to top on slide change
+  useEffect(() => {
+    stageRef.current?.scrollTo({ top: 0 });
+  }, [activeSlide]);
+
   // Always reset to Slide 1 (index 0) when trend changes
   useEffect(() => {
     setActiveSlide([0, 0]);
   }, [trend.id]);
+
+  // Prefetch optimized GeoJSON asset in the background so Slide 06 (Regional) loads in 0ms
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      fetch("/india-states-simplified.json").catch(() => {});
+    }
+  }, []);
 
   const goToSlide = useCallback((newIndex: number) => {
     if (newIndex < 0 || newIndex >= REPORT_SLIDES.length) return;
@@ -296,7 +310,7 @@ export default function TrendReportDeck({ trend, onExit }: TrendReportDeckProps)
       </header>
 
       {/* ── Main Slide Viewport (Animated Deck Stage) ───────────────────────── */}
-      <main className="deck-stage flex-1 flex flex-col justify-center py-2 sm:py-3 overflow-y-auto overflow-x-hidden relative">
+      <main ref={stageRef} className="deck-stage flex-1 flex flex-col justify-start sm:justify-center py-1 sm:py-2 overflow-y-auto overflow-x-hidden relative">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={activeSlide}

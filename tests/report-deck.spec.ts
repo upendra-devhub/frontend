@@ -36,9 +36,9 @@ test.describe('Full-Screen Interactive Report Deck', () => {
     // 5. Use ArrowRight keyboard shortcut to advance to Slide 3: Audience
     await page.keyboard.press('ArrowRight');
     await expect(page.locator('#deck-tab-audience')).toHaveAttribute('aria-current', 'page');
-    await expect(page.getByRole('heading', { name: 'Age & Gender' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Age Distribution', exact: true })).toBeVisible();
 
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1100);
     await page.screenshot({ path: 'test-results/slide-3-audience.png' });
 
     // 6. Click Slide 4: Sentiment tab
